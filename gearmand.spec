@@ -43,6 +43,7 @@ languages.
 %package -n	%{develname}
 Summary:	Development files for the Gearman Server and C Library
 Group:		Development/C
+Requires:	%{libname} >= %{version}
 Provides:	gearman-devel = %{version}
 
 %description -n	%{develname}
