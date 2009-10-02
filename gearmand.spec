@@ -1,10 +1,12 @@
-%define major 1
+%define major 2
+%define server_major 0
 %define libname %mklibname gearman %{major}
+%define server_libname %mklibname gearman-server %{server_major}
 %define develname %mklibname gearman -d
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.9
+Version:	0.10
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
@@ -17,11 +19,14 @@ Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre):  rpm-helper
 Requires(postun): rpm-helper
+BuildRequires:	boost-devel
 BuildRequires:	doxygen
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libdrizzle-devel
 BuildRequires:	libevent-devel
 BuildRequires:	libmemcached-devel >= 0.30
+BuildRequires:	libuuid-devel
+BuildRequires:	memcached
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -31,7 +36,7 @@ work in parallel, to load balance processing, or to call functions between
 languages.
 
 %package -n	%{libname}
-Summary:	Shared Gearman Server and C Library
+Summary:	Shared Gearman Client Library
 Group:		System/Libraries
 
 %description -n	%{libname}
@@ -39,6 +44,20 @@ Gearman provides a generic framework to farm out work to other machines,
 dispatching function calls to machines that are better suited to do work, to do
 work in parallel, to load balance processing, or to call functions between
 languages.
+
+This package contains the Client Library.
+
+%package -n	%{server_libname}
+Summary:	Shared Gearman Server Library
+Group:		System/Libraries
+
+%description -n	%{server_libname}
+Gearman provides a generic framework to farm out work to other machines,
+dispatching function calls to machines that are better suited to do work, to do
+work in parallel, to load balance processing, or to call functions between
+languages.
+
+This package contains the Server Library.
 
 %package -n	%{develname}
 Summary:	Development files for the Gearman Server and C Library
@@ -58,9 +77,14 @@ cp %{SOURCE2} gearmand.sysconfig
 cp %{SOURCE3} gearmand.logrotate
 
 %build
-%configure2_5x
+
+%configure2_5x \
+    --with-memcached=%{_sbindir}/memcached
 
 %make
+
+%check
+make check
 
 %install
 rm -rf %{buildroot}
@@ -120,16 +144,22 @@ rm -rf %{buildroot}
 %ghost %attr(0640,%{name},%{name}) /var/log/%{name}/gearmand.log
 
 %files -n %{libname}
-%doc AUTHORS ChangeLog COPYING NEWS README
+%doc AUTHORS ChangeLog COPYING README
 %defattr(-, root, root)
 %{_libdir}/lib*.so.%{major}*
+
+%files -n %{server_libname}
+%doc AUTHORS ChangeLog COPYING README
+%defattr(-, root, root)
+%{_libdir}/lib*.so.%{server_major}*
 
 %files -n %{develname}
 %defattr(-, root, root)
 %dir %{_includedir}/libgearman
+%dir %{_includedir}/libgearman-server
 %{_includedir}/libgearman/*.h
+%{_includedir}/libgearman-server/*.h
 %{_libdir}/lib*.*a
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
 %{_mandir}/man3/gear*
-
