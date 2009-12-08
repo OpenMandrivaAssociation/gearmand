@@ -1,4 +1,4 @@
-%define major 2
+%define major 3
 %define server_major 0
 %define libname %mklibname gearman %{major}
 %define server_libname %mklibname gearman-server %{server_major}
