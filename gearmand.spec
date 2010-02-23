@@ -1,13 +1,11 @@
-%define major 3
-%define server_major 0
+%define major 4
 %define libname %mklibname gearman %{major}
-%define server_libname %mklibname gearman-server %{server_major}
 %define develname %mklibname gearman -d
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.11
-Release:	%mkrel 2
+Version:	0.12
+Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
 URL:		http://www.gearman.org/
@@ -27,6 +25,7 @@ BuildRequires:	libevent-devel
 BuildRequires:	libmemcached-devel >= 0.30
 BuildRequires:	libuuid-devel
 BuildRequires:	memcached
+BuildRequires:	tokyocabinet-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -47,18 +46,6 @@ languages.
 
 This package contains the Client Library.
 
-%package -n	%{server_libname}
-Summary:	Shared Gearman Server Library
-Group:		System/Libraries
-
-%description -n	%{server_libname}
-Gearman provides a generic framework to farm out work to other machines,
-dispatching function calls to machines that are better suited to do work, to do
-work in parallel, to load balance processing, or to call functions between
-languages.
-
-This package contains the Server Library.
-
 %package -n	%{develname}
 Summary:	Development files for the Gearman Server and C Library
 Group:		Development/C
@@ -77,6 +64,7 @@ cp %{SOURCE2} gearmand.sysconfig
 cp %{SOURCE3} gearmand.logrotate
 
 %build
+%serverbuild
 
 %configure2_5x \
     --with-memcached=%{_sbindir}/memcached
@@ -148,17 +136,10 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 %{_libdir}/lib*.so.%{major}*
 
-%files -n %{server_libname}
-%doc AUTHORS ChangeLog COPYING README
-%defattr(-, root, root)
-%{_libdir}/lib*.so.%{server_major}*
-
 %files -n %{develname}
 %defattr(-, root, root)
 %dir %{_includedir}/libgearman
-%dir %{_includedir}/libgearman-server
 %{_includedir}/libgearman/*.h
-%{_includedir}/libgearman-server/*.h
 %{_libdir}/lib*.*a
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
