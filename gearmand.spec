@@ -4,8 +4,8 @@
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.14
-Release:	%mkrel 2
+Version:	0.15
+Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
 URL:		http://www.gearman.org/
@@ -22,7 +22,7 @@ BuildRequires:	doxygen
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libdrizzle-devel
 BuildRequires:	libevent-devel
-BuildRequires:	libmemcached-devel >= 0.30
+BuildRequires:	libmemcached-devel >= 0.42
 BuildRequires:	libuuid-devel
 BuildRequires:	memcached
 BuildRequires:	tokyocabinet-devel
