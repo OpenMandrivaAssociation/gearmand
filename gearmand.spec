@@ -4,7 +4,7 @@
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.16
+Version:	0.17
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
@@ -123,6 +123,7 @@ rm -rf %{buildroot}
 %attr(0755,root,root) %{_initrddir}/%{name}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%{_bindir}/gearadmin
 %{_bindir}/gearman
 %{_sbindir}/gearmand
 %{_mandir}/man1/gear*
