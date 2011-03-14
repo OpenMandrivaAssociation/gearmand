@@ -5,7 +5,7 @@
 Summary:	Gearman Server and C Library
 Name:		gearmand
 Version:	0.17
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	BSD
 Group:		System/Servers
 URL:		http://www.gearman.org/
