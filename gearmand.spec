@@ -19,12 +19,15 @@ Requires(pre):  rpm-helper
 Requires(postun): rpm-helper
 BuildRequires:	boost-devel
 BuildRequires:	doxygen
-BuildRequires:	e2fsprogs-devel
 BuildRequires:	drizzle1-client-devel
+BuildRequires:	e2fsprogs-devel
 BuildRequires:	libevent-devel
-BuildRequires:	libmemcached-devel >= 0.42
+BuildRequires:	libmemcached-devel >= 0.50
 BuildRequires:	libuuid-devel
+BuildRequires:	lzmalib-devel
 BuildRequires:	memcached
+BuildRequires:	openssl-devel
+BuildRequires:	postgresql-libs-devel
 BuildRequires:	tokyocabinet-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -145,3 +148,4 @@ rm -rf %{buildroot}
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
 %{_mandir}/man3/gear*
+%{_mandir}/man3/libgearman.3*
