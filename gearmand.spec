@@ -13,22 +13,25 @@ Source0:	http://launchpad.net/gearmand/trunk/%{version}/+download/gearmand-%{ver
 Source1:        gearmand.init
 Source2:        gearmand.sysconfig
 Source3:        gearmand.logrotate
+Patch0:		gearmand-0.25-linkage_fix.diff
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre):  rpm-helper
 Requires(postun): rpm-helper
+BuildRequires:	automake autoconf libtool
 BuildRequires:	boost-devel
 BuildRequires:	doxygen
 BuildRequires:	drizzle1-client-devel
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	libevent-devel
-BuildRequires:	libmemcached-devel >= 0.50
+BuildRequires:	libmemcached-devel >= 1.0
 BuildRequires:	libuuid-devel
 BuildRequires:	lzmalib-devel
-BuildRequires:	memcached
+BuildRequires:	memcached >= 1.4.9
 BuildRequires:	openssl-devel
-BuildRequires:	postgresql-libs-devel
+BuildRequires:	postgresql-libs-devel >= 9.0
 BuildRequires:	tokyocabinet-devel
+BuildRequires:	pkgconfig
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -61,16 +64,22 @@ Development files for the Gearman Server and C Library.
 %prep
 
 %setup -q
+%patch0 -p0
 
 cp %{SOURCE1} gearmand.init
 cp %{SOURCE2} gearmand.sysconfig
 cp %{SOURCE3} gearmand.logrotate
 
 %build
+autoreconf -fi
 %serverbuild
 
 %configure2_5x \
-    --with-memcached=%{_sbindir}/memcached
+    --enable-shared \
+    --disable-static \
+    --disable-rpath \
+    --with-memcached=%{_bindir}/memcached \
+    --with-memcached_sasl=%{_bindir}/memcached
 
 %make
 
@@ -80,7 +89,8 @@ cp %{SOURCE3} gearmand.logrotate
 %install
 rm -rf %{buildroot}
 
-%makeinstall_std
+# weird makefile poo
+make DESTDIR=%{buildroot} install-exec-am install-data-am
 
 # don't fiddle with the initscript!
 export DONT_GPRINTIFY=1
@@ -97,13 +107,13 @@ install -m0644 gearmand.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 touch %{buildroot}/var/log/%{name}/gearmand.log
 
-%if %mdkversion < 200900
-%post   -n %{libname} -p /sbin/ldconfig
+# (oe) avoid pulling 32 bit libraries on 64 bit arch
+%if "%{_lib}" == "lib64"
+perl -pi -e "s|-L/usr/lib\b|-L%{_libdir}|g" %{buildroot}%{_libdir}/pkgconfig/*.pc
 %endif
 
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
+# cleanup
+rm -f %{buildroot}%{_libdir}/*.*a
 
 %pre
 %_pre_useradd %{name} /dev/null /bin/false
@@ -143,8 +153,9 @@ rm -rf %{buildroot}
 %files -n %{develname}
 %defattr(-, root, root)
 %dir %{_includedir}/libgearman
+%dir %{_includedir}/libgearman-1.0
 %{_includedir}/libgearman/*.h
-%{_libdir}/lib*.*a
+%{_includedir}/libgearman-1.0/*.h
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
 %{_mandir}/man3/gear*
