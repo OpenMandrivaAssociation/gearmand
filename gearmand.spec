@@ -4,7 +4,7 @@
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.25
+Version:	0.28
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Servers
@@ -13,7 +13,7 @@ Source0:	http://launchpad.net/gearmand/trunk/%{version}/+download/gearmand-%{ver
 Source1:        gearmand.init
 Source2:        gearmand.sysconfig
 Source3:        gearmand.logrotate
-Patch0:		gearmand-0.25-linkage_fix.diff
+Patch0:		gearmand-0.28-drizzle_header_fix.diff
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre):  rpm-helper
@@ -22,16 +22,17 @@ BuildRequires:	automake autoconf libtool
 BuildRequires:	boost-devel
 BuildRequires:	doxygen
 BuildRequires:	drizzle1-client-devel
-BuildRequires:	e2fsprogs-devel
+BuildRequires:	ext2fs-devel
+BuildRequires:	hiredis-devel
 BuildRequires:	libevent-devel
 BuildRequires:	libmemcached-devel >= 1.0
 BuildRequires:	libuuid-devel
 BuildRequires:	lzmalib-devel
 BuildRequires:	memcached >= 1.4.9
 BuildRequires:	openssl-devel
+BuildRequires:	pkgconfig
 BuildRequires:	postgresql-libs-devel >= 9.0
 BuildRequires:	tokyocabinet-devel
-BuildRequires:	pkgconfig
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -71,15 +72,20 @@ cp %{SOURCE2} gearmand.sysconfig
 cp %{SOURCE3} gearmand.logrotate
 
 %build
-autoreconf -fi
 %serverbuild
 
 %configure2_5x \
     --enable-shared \
     --disable-static \
-    --disable-rpath \
     --with-memcached=%{_bindir}/memcached \
     --with-memcached_sasl=%{_bindir}/memcached
+
+# nuke rpath, fugly autopoo
+perl -pi -e "s|^BOOST_LDPATH.*|BOOST_LDPATH=%{_libdir}|g" Makefile
+perl -pi -e "s|^BOOST_PROGRAM_OPTIONS_LDFLAGS.*|BOOST_PROGRAM_OPTIONS_LDFLAGS=-L%{_libdir}|g" Makefile
+perl -pi -e "s|^BOOST_PROGRAM_OPTIONS_LDPATH.*|BOOST_PROGRAM_OPTIONS_LDPATH=%{_libdir}|g" Makefile
+perl -pi -e "s|^BOOST_THREAD_LDFLAGS.*|BOOST_THREAD_LDFLAGS=-L%{_libdir}|g" Makefile
+perl -pi -e "s|^BOOST_THREAD_LDPATH.*|BOOST_THREAD_LDPATH=%{_libdir}|g" Makefile
 
 %make
 
@@ -154,8 +160,8 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 %dir %{_includedir}/libgearman
 %dir %{_includedir}/libgearman-1.0
-%{_includedir}/libgearman/*.h
-%{_includedir}/libgearman-1.0/*.h
+%{_includedir}/libgearman/*.h*
+%{_includedir}/libgearman-1.0/*.h*
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
 %{_mandir}/man3/gear*
