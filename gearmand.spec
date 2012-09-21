@@ -1,10 +1,10 @@
-%define major 6
+%define major 7
 %define libname %mklibname gearman %{major}
 %define develname %mklibname gearman -d
 
 Summary:	Gearman Server and C Library
 Name:		gearmand
-Version:	0.32
+Version:	0.39
 Release:	1
 License:	BSD
 Group:		System/Servers
@@ -13,27 +13,24 @@ Source0:	http://launchpad.net/gearmand/trunk/%{version}/+download/gearmand-%{ver
 Source1:        gearmand.init
 Source2:        gearmand.sysconfig
 Source3:        gearmand.logrotate
-Patch0:		gearmand-0.28-drizzle_header_fix.diff
+Patch0:		gearmand-0.39-drizzle_header_fix.patch
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre):  rpm-helper
 Requires(postun): rpm-helper
-BuildRequires:	automake autoconf libtool
 BuildRequires:	boost-devel
 BuildRequires:	doxygen
 BuildRequires:	drizzle1-client-devel
 BuildRequires:	ext2fs-devel
 BuildRequires:	hiredis-devel
-BuildRequires:	libevent-devel
-BuildRequires:	libmemcached-devel >= 1.0
-BuildRequires:	libuuid-devel
+BuildRequires:	pkgconfig(libevent)
+BuildRequires:	pkgconfig(libmemcached) >= 1.0
+BuildRequires:	pkgconfig(uuid)
 BuildRequires:	lzmalib-devel
 BuildRequires:	memcached >= 1.4.9
 BuildRequires:	openssl-devel
-BuildRequires:	pkgconfig
 BuildRequires:	postgresql-libs-devel >= 9.0
 BuildRequires:	tokyocabinet-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Gearman provides a generic framework to farm out work to other machines,
@@ -57,7 +54,7 @@ This package contains the Client Library.
 Summary:	Development files for the Gearman Server and C Library
 Group:		Development/C
 Requires:	%{libname} >= %{version}
-Provides:	gearman-devel = %{version}
+Provides:	gearman-devel = %{EVRD}
 
 %description -n	%{develname}
 Development files for the Gearman Server and C Library.
@@ -65,7 +62,7 @@ Development files for the Gearman Server and C Library.
 %prep
 
 %setup -q
-%patch0 -p0
+%patch0 -p1
 
 cp %{SOURCE1} gearmand.init
 cp %{SOURCE2} gearmand.sysconfig
@@ -134,9 +131,6 @@ rm -f %{buildroot}%{_libdir}/*.*a
 %preun
 %_preun_service %{name}
 
-%clean
-rm -rf %{buildroot}
-
 %files
 %defattr(-, root, root)
 %attr(0755,root,root) %{_initrddir}/%{name}
@@ -159,9 +153,8 @@ rm -rf %{buildroot}
 %files -n %{develname}
 %defattr(-, root, root)
 %dir %{_includedir}/libgearman
-%dir %{_includedir}/libgearman-1.0
 %{_includedir}/libgearman/*.h*
-%{_includedir}/libgearman-1.0/*.h*
+%{_includedir}/libgearman-1.0
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/gearmand.pc
 %{_mandir}/man3/gear*
