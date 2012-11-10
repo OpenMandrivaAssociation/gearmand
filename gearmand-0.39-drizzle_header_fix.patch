@@ -1,0 +1,26 @@
+Index: gearmand-0.39/tests/drizzle_test.cc
+===================================================================
+--- gearmand-0.39.orig/tests/drizzle_test.cc
++++ gearmand-0.39/tests/drizzle_test.cc
+@@ -25,7 +25,7 @@ using namespace libtest;
+ #define WORKER_FUNCTION "drizzle_queue_test"
+ 
+ #if defined(HAVE_LIBDRIZZLE) && HAVE_LIBDRIZZLE
+-#include <libdrizzle-1.0/drizzle_client.h>
++#include <libdrizzle-1.0/libdrizzle/drizzle_client.h>
+ #endif
+ 
+ static in_port_t drizzled_port= 0;
+Index: gearmand-0.39/libtest/drizzled.cc
+===================================================================
+--- gearmand-0.39.orig/libtest/drizzled.cc
++++ gearmand-0.39/libtest/drizzled.cc
+@@ -62,7 +62,7 @@ using namespace libtest;
+ #endif
+ 
+ #if defined(HAVE_LIBDRIZZLE) && HAVE_LIBDRIZZLE
+-#include <libdrizzle-1.0/drizzle_client.h>
++#include <libdrizzle-1.0/libdrizzle/drizzle_client.h>
+ #endif
+ 
+ using namespace libtest;

@@ -1,0 +1,5 @@
+sources:
+  "gearmand-0.39.tar.gz:"	a63af4d86809f39971b21b361740d472bf993345
+  "gearmand.init:"	9525da7451d34661e6204c038ce99c91b903dea8
+  "gearmand.logrotate:"	9e91cf72b0195618e8d4f38feaf7488d0288033b
+  "gearmand.sysconfig:"	e5164f0f9cd655962b1391fef8220e3e48040802
