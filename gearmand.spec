@@ -8,7 +8,7 @@ Version:	0.39
 Release:	1
 License:	BSD
 Group:		System/Servers
-URL:		http://www.gearman.org/
+URL:		https://www.gearman.org/
 Source0:	http://launchpad.net/gearmand/trunk/%{version}/+download/gearmand-%{version}.tar.gz
 Source1:        gearmand.init
 Source2:        gearmand.sysconfig
