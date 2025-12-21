@@ -18,6 +18,11 @@ Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre):  rpm-helper
 Requires(postun): rpm-helper
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	boost-devel
 BuildRequires:	doxygen
 BuildRequires:	drizzle1-client-devel
